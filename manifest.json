@@ -1,0 +1,18 @@
+{
+  "background_color": "#ffffff",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "rednilson.github",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "rednilson.github",
+  "start_url": "/",
+  "theme_color": "#ffffff",
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://rednilson.github.io/renilsonteste/",
+      "id": ""
+    }
+  ]
+}
