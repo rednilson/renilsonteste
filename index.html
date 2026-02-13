@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>✝ Terço Mariano Pro+</title>
+
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body { font-family: sans-serif; background:#f8fafc;}
+</style>
+</head>
+
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const {useState,useEffect}=React;
+
+const TITULOS=["Iniciante","Devoto","Peregrino","Intercessor","Apóstolo","Guardião"];
+
+const MISTERIOS=[
+{
+nome:"Gozosos",
+lista:[
+"1º A Anunciação: O Anjo Gabriel anuncia a Maria que ela será a Mãe do Salvador.",
+"2º A Visitação: Maria visita sua prima Isabel, que reconhece nela a Mãe do Senhor.",
+"3º O Nascimento de Jesus: Jesus nasce em Belém, trazendo a luz da salvação ao mundo.",
+"4º A Apresentação no Templo: Maria e José apresentam o Menino Jesus no Templo.",
+"5º A Perda e Encontro no Templo: Jesus é encontrado no Templo ensinando os doutores da Lei."
+]
+},
+{
+nome:"Dolorosos",
+lista:[
+"1º Agonia no Horto: Jesus sofre e sua angústia no Getsêmani, entregando-se à vontade do Pai.",
+"2º Flagelação: Jesus é cruelmente flagelado por ordem de Pilatos.",
+"3º Coroação de Espinhos: Jesus é coroado com espinhos e humilhado como rei.",
+"4º Caminho do Calvário: Jesus carrega a cruz até o monte Calvário.",
+"5º Crucificação: Jesus é crucificado e morre na cruz para a salvação da humanidade."
+]
+},
+{
+nome:"Gloriosos",
+lista:[
+"1º Ressurreição: Jesus ressuscita vitorioso sobre a morte.",
+"2º Ascensão: Jesus sobe aos céus diante dos discípulos.",
+"3º Pentecostes: O Espírito Santo desce sobre Maria e os Apóstolos.",
+"4º Assunção: Maria é elevada ao céu em corpo e alma.",
+"5º Coroação de Maria: Maria é coroada como Rainha do Céu e da Terra."
+]
+},
+{
+nome:"Luminosos",
+lista:[
+"1º Batismo no Jordão: Jesus é batizado por João e o Pai o revela como Filho amado.",
+"2º Bodas de Caná: Jesus realiza seu primeiro milagre a pedido de Maria.",
+"3º Anúncio do Reino: Jesus proclama o Reino de Deus e chama à conversão.",
+"4º Transfiguração: Jesus manifesta sua glória no Monte Tabor.",
+"5º Instituição da Eucaristia: Jesus institui a Eucaristia na Última Ceia."
+]
+}
+];
+
+function misterioDoDia(){
+const d=new Date().getDay();
+if(d===0) return 2;
+if(d===1) return 0;
+if(d===2) return 1;
+if(d===3) return 2;
+if(d===4) return 3;
+if(d===5) return 1;
+if(d===6) return 0;
+}
+
+const App=()=>{
+const [tela,setTela]=useState("inicioApp");
+const hoje=new Date().toDateString();
+
+const [fase,setFase]=useState("inicio");
+const [etapaInicial,setEtapaInicial]=useState(0);
+const [conta,setConta]=useState(0);
+const [dezena,setDezena]=useState(0);
+
+const [xp,setXp]=useState(Number(localStorage.getItem("xp"))||0);
+const [sementes,setSementes]=useState(Number(localStorage.getItem("seeds"))||0);
+const [tercos,setTercos]=useState(Number(localStorage.getItem("tercos"))||0);
+const [streak,setStreak]=useState(Number(localStorage.getItem("streak"))||0);
+const [ultimoDia,setUltimoDia]=useState(localStorage.getItem("ultimoDia"));
+const [badges,setBadges]=useState(JSON.parse(localStorage.getItem("badges")||"[]"));
+const [missao,setMissao]=useState(localStorage.getItem("missao")===hoje);
+
+const nivel=Math.floor(xp/100);
+const misterioIndex=misterioDoDia();
+const misterioAtual=MISTERIOS[misterioIndex];
+
+useEffect(()=>{
+localStorage.setItem("xp",xp);
+localStorage.setItem("seeds",sementes);
+localStorage.setItem("tercos",tercos);
+localStorage.setItem("streak",streak);
+localStorage.setItem("badges",JSON.stringify(badges));
+},[xp,sementes,tercos,streak,badges]);
+
+function addXP(valor){ setXp(x=>x+valor); }
+
+function verificarStreak(){
+if(!ultimoDia){
+setStreak(1);
+localStorage.setItem("ultimoDia",hoje);
+setUltimoDia(hoje);
+return;
+}
+const ontem=new Date(); ontem.setDate(ontem.getDate()-1);
+if(ultimoDia===hoje) return;
+if(new Date(ultimoDia).toDateString()===ontem.toDateString()){
+setStreak(s=>s+1);
+}else{
+setStreak(1);
+}
+localStorage.setItem("ultimoDia",hoje);
+setUltimoDia(hoje);
+}
+
+function verificarBadges(){
+let novas=[...badges];
+if(tercos>=1&&!novas.includes("Primeiro Terço"))novas.push("Primeiro Terço");
+if(streak>=7&&!novas.includes("7 Dias Seguidos"))novas.push("7 Dias Seguidos");
+if(tercos>=30&&!novas.includes("30 Terços"))novas.push("30 Terços");
+if(nivel>=10&&!novas.includes("Nível 10"))novas.push("Nível 10");
+setBadges(novas);
+}
+
+function textoOracao(){
+
+if(fase==="inicio"){
+if(etapaInicial===0) return "Credo";
+if(etapaInicial===1) return "Pai-Nosso";
+return `Ave-Maria (${conta+1}/3)`;
+}
+
+if(fase==="dezenas"){
+
+if(conta===0){
+return "Pai-Nosso";
+}
+
+return `Ave-Maria (${conta}/10)`;
+}
+
+if(fase==="final") return "Salve Rainha";
+if(fase==="fim") return "🙏";
+}
+
+
+
+function incrementar(){
+
+if(fase==="inicio"){
+
+if(etapaInicial===0){ addXP(5); setEtapaInicial(1); return; }
+if(etapaInicial===1){ addXP(3); setEtapaInicial(2); return; }
+
+if(conta<2){
+addXP(1);
+setConta(c=>c+1);
+}else{
+setFase("dezenas");
+setConta(0);
+}
+}
+
+else if(fase==="dezenas"){
+
+if(conta===0){
+addXP(3);
+setConta(1);
+return;
+}
+
+if(conta<10){
+addXP(1);
+setConta(c=>c+1);
+}else{
+addXP(10);
+if(dezena<4){
+setDezena(d=>d+1);
+setConta(0);
+}else{
+setFase("final");
+}
+}
+}
+
+else if(fase==="final"){
+addXP(5);
+setFase("fim");
+
+setTercos(t=>t+1);
+setSementes(s=>s+100);
+
+verificarStreak();
+
+if(!missao){
+setSementes(s=>s+50);
+setMissao(true);
+localStorage.setItem("missao",hoje);
+}
+
+setTimeout(verificarBadges,300);
+}
+}
+
+function zerarTudo(){
+if(confirm("Deseja realmente zerar todo o progresso?")){
+localStorage.clear();
+window.location.reload();
+}
+}
+
+
+function reiniciar(){
+setFase("inicio");
+setEtapaInicial(0);
+setConta(0);
+setDezena(0);
+}
+
+if(tela==="inicioApp"){
+return(
+<div className="min-h-screen flex flex-col items-center justify-center bg-blue-600 text-white text-center p-8 relative">
+
+{/* Ícone Email */}
+<a 
+href="mailto:rednilson@gmail.com"
+className="absolute top-6 right-16 opacity-70 hover:opacity-100 transition"
+title="Enviar e-mail"
+>
+<svg xmlns="http://www.w3.org/2000/svg" 
+className="h-7 w-7" 
+fill="none" 
+viewBox="0 0 24 24" 
+stroke="currentColor" 
+strokeWidth={2}>
+<path strokeLinecap="round" strokeLinejoin="round" 
+d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+</svg>
+</a>
+
+{/* Ícone Reset */}
+<button
+onClick={zerarTudo}
+className="absolute top-6 right-6 opacity-70 hover:opacity-100 transition"
+title="Zerar Progresso"
+>
+<svg xmlns="http://www.w3.org/2000/svg" 
+className="h-7 w-7" 
+fill="none" 
+viewBox="0 0 24 24" 
+stroke="currentColor" 
+strokeWidth={2}>
+<path strokeLinecap="round" strokeLinejoin="round" 
+d="M4 4v5h.582M20 20v-5h-.581M5.64 9A7 7 0 0119 12m-1 3a7 7 0 01-13.36-3" />
+</svg>
+</button>
+
+<div className="mb-10">
+<h1 className="text-4xl font-bold mb-2">✝ Terço Mariano Pro+</h1>
+<p className="text-sm opacity-80">
+Mistério de Hoje: {misterioAtual.nome}
+</p>
+</div>
+
+<div className="mb-8 space-y-2 text-sm">
+<p>🔥 {streak} dias consecutivos</p>
+<p>🌱 {sementes} sementes</p>
+<p>📿 {tercos} terços rezados</p>
+<p>Nível {nivel}</p>
+</div>
+
+<button
+onClick={()=>setTela("terco")}
+className="bg-white text-blue-600 font-bold px-8 py-3 rounded-full shadow-lg active:scale-95 transition"
+>
+Iniciar Oração
+</button>
+
+</div>
+);
+}
+
+
+
+
+return(
+
+<div className="min-h-screen flex flex-col bg-slate-50">
+
+<header className="bg-white p-4 shadow text-center">
+<h1 className="font-bold">
+Mistério do Dia: {misterioAtual.nome}
+</h1>
+<p className="text-sm text-slate-500">
+Nível {nivel} - {TITULOS[Math.min(nivel,TITULOS.length-1)]}
+</p>
+<p className="text-xs">XP: {xp}</p>
+</header>
+
+<main className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+
+<div className="mb-6">
+{fase==="inicio"&&(
+<>
+<h2 className="font-bold text-lg">Orações Iniciais</h2>
+<p className="text-sm text-slate-600">
+Credo, 1 Pai-Nosso e 3 Ave-Marias
+</p>
+</>
+)}
+
+{fase==="dezenas"&&(
+<>
+<h2 className="font-bold text-lg">
+Dezena {dezena+1}/5
+</h2>
+<p className="text-sm text-slate-600">
+{misterioAtual.lista[dezena]}
+</p>
+</>
+)}
+
+{fase==="final"&&(
+<h2 className="font-bold text-lg">Salve Rainha</h2>
+)}
+
+{fase==="fim"&&(
+<h2 className="font-bold text-lg text-green-600">
+Terço Completo 🙏
+</h2>
+)}
+</div>
+
+<button
+onClick={fase!=="fim"?incrementar:null}
+className="w-56 h-56 rounded-full bg-blue-600 text-white text-xl font-bold shadow-xl active:scale-95 transition flex items-center justify-center p-4 text-center"
+>
+{textoOracao()}
+</button>
+
+{fase==="fim"&&(
+<button
+onClick={reiniciar}
+className="mt-6 px-6 py-2 bg-green-500 text-white rounded-full"
+>
+Rezar Novamente
+</button>
+)}
+
+</main>
+
+<footer className="bg-white p-4 border-t text-center text-sm">
+
+<div className="flex justify-center gap-6 mb-3">
+<div>🌱 {sementes}</div>
+<div>📿 {tercos}</div>
+<div>🔥 {streak} dias</div>
+</div>
+
+<div className="text-xs mb-2">
+Missão: Rezar 1 Terço Hoje {missao?"✅":"+50 🌱"}
+</div>
+
+<div className="flex flex-wrap justify-center gap-2">
+{badges.map((b,i)=>(
+<span key={i} className="px-2 py-1 bg-yellow-200 rounded-full text-xs">
+🏆 {b}
+</span>
+))}
+</div>
+
+</footer>
+
+</div>
+)
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
