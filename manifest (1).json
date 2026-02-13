@@ -1,0 +1,11 @@
+{
+  "background_color": "#ffffff",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "rednilson.github",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "rednilson.github",
+  "start_url": "/https://rednilson.github.io/renilsonteste/",
+  "theme_color": "#ffffff"
+}
