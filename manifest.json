@@ -2,7 +2,7 @@
   "name": "Terço Mariano Pro+",
   "short_name": "Terço Pro",
   "description": "Aplicativo católico para oração do Santo Terço com gamificação, níveis, streak e conquistas.",
-  "start_url": ".",
+  "start_url": "https://rednilson.github.io/renilsonteste/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#2563EB",
